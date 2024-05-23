@@ -1,10 +1,11 @@
 import Image from "../models/ImageSchema.js";
-
+import cloudnery from "cloudinary";
 class ImageController {
   static UploadImage = async (req, res) => {
     try {
-      const { url } = req.body;
-      const newImage = new Image({ url });
+      const { url, publicId, Description } = req.body;
+      console.log(publicId);
+      const newImage = new Image({ url, publicId, Description });
       await newImage.save();
       res.status(201).json({
         message: "Image uploaded successfully.",
@@ -48,8 +49,11 @@ class ImageController {
   static deleteImage = async (req, res) => {
     try {
       const { id } = req.params;
-      await Image.findByIdAndDelete(id);
-      return res.status(200).json({ message: "Image Delete Successfully." });
+      // const { imgUrl, publicId } = req.body;
+      const data = await Image.findByIdAndDelete(id);
+      return res
+        .status(200)
+        .json({ message: "Image Deleted Successfully.", data });
     } catch (error) {
       return res.status(500).json(error);
     }
